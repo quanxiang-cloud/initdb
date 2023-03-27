@@ -16,16 +16,24 @@ limitations under the License.
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"time"
 
 	"github.com/quanxiang-cloud/initdb/internal/db"
+	"github.com/quanxiang-cloud/initdb/internal/faas"
+	"github.com/quanxiang-cloud/initdb/internal/search"
+	"github.com/quanxiang-cloud/initdb/internal/web"
+	"github.com/quanxiang-cloud/initdb/pkg/toolkits"
 	"github.com/vrischmann/envconfig"
 )
 
 func main() {
 	var db db.DBConfig
+	var git faas.GitConf
+	var docker faas.DockerConf
+	var esSearch search.SearchConf
 	if err := envconfig.Init(&db); err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 	/*
 		dbPath, err := filepath.Abs("./migrations")
@@ -33,10 +41,19 @@ func main() {
 			fmt.Println(err)
 		}
 	*/
+	if err := envconfig.Init(&git); err != nil {
+		log.Panicln(err)
+	}
+	if err := envconfig.Init(&docker); err != nil {
+		log.Panicln(err)
+	}
+	if err := envconfig.Init(&esSearch); err != nil {
+		log.Panicln(err)
+	}
 	dirs := []string{}
 	files, err := ioutil.ReadDir("./migrations")
 	if err != nil {
-		fmt.Println(err)
+		toolkits.Error(err)
 	}
 	for _, f := range files {
 		dirs = append(dirs, f.Name())
@@ -49,10 +66,70 @@ func main() {
 		break
 	}
 	err = db.CreateDB(dirs)
+	if err != nil {
+		toolkits.Error(err)
+	}
 
 	for _, d := range dirs {
 		err = db.MigrateDB("./migrations/"+d, d)
+		if err != nil {
+			toolkits.Error(err)
+		}
 	}
 
-	fmt.Println(err)
+	// Init faas git and docker
+	dockerSQL := docker.GenDockerSQL()
+	for i := 0; i < 5; i++ {
+		err = db.ExecSql("faas", dockerSQL)
+		if err != nil {
+			toolkits.Error(fmt.Sprintf("retry exec docker sql %d times", i), err)
+			time.Sleep(2 * time.Second)
+			continue
+		}
+		break
+	}
+
+	gitSQL := git.GenGitSQL()
+	for i := 0; i < 5; i++ {
+		err = db.ExecSql("faas", gitSQL)
+		if err != nil {
+			toolkits.Error(fmt.Sprintf("retry exec gitlab sql %d times", i), err)
+			time.Sleep(2 * time.Second)
+			continue
+		}
+		break
+	}
+	// init nav
+	for {
+		var i int
+		if err := web.InitNav(); err != nil {
+			toolkits.Error(fmt.Sprintf("retry init nav %d times", i), err)
+			time.Sleep(5 * time.Second)
+			i++
+			continue
+		}
+		break
+	}
+
+	// init artery
+	for {
+		var i int
+		if err := web.InitArtery(); err != nil {
+			time.Sleep(5 * time.Second)
+			toolkits.Error(fmt.Sprintf("retry init artery %d times", i), err)
+			i++
+			continue
+		}
+		break
+	}
+	for {
+		var i int
+		if err := esSearch.InitSearch("user"); err != nil {
+			time.Sleep(5 * time.Second)
+			toolkits.Error(fmt.Sprintf("retry init search user %d times", i), err)
+			i++
+			continue
+		}
+		break
+	}
 }

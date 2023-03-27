@@ -1,5 +1,3 @@
-CREATE DATABASE faas DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-
 create table dockers
 (
     id         varchar(64)  not null
@@ -16,7 +14,7 @@ create table dockers
     updated_by varchar(64)  null,
     deleted_by varchar(64)  null,
     tenant_id  varchar(64)  null
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table event
 (
@@ -30,7 +28,7 @@ create table event
     create_at bigint       null comment 'create time',
     update_at bigint       null comment 'update time',
     delete_at bigint       null comment 'delete time'
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table functions
 (
@@ -56,7 +54,7 @@ create table functions
     built_at     bigint       null,
     constraint functions_name_uindex
         unique (name)
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table gits
 (
@@ -72,9 +70,10 @@ create table gits
     updated_by  varchar(64)  null,
     deleted_by  varchar(64)  null,
     tenant_id   varchar(64)  null,
-    known_hosts varchar(250) null,
+    known_hosts varchar(1000) null,
+    key_scan_known_hosts text,
     ssh         text         null
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table groups
 (
@@ -90,7 +89,7 @@ create table groups
     updated_by varchar(64) null,
     deleted_by varchar(64) null,
     app_id     varchar(64) null
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table projects
 (
@@ -110,8 +109,8 @@ create table projects
     version      varchar(30)  null,
     status       int          null,
     user_id      varchar(64)  null,
-    repo_url     varchar(200) null
-);
+    repo_url     text null
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table users
 (
@@ -126,7 +125,7 @@ create table users
     updated_by varchar(64) null,
     deleted_by varchar(64) null,
     token      varchar(64) null
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table user_group
 (
@@ -140,5 +139,4 @@ create table user_group
     created_by varchar(64) null,
     updated_by varchar(64) null,
     deleted_by varchar(64) null
-);
-
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;

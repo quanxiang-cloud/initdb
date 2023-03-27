@@ -15,7 +15,7 @@ create table org_department
     updated_by varchar(64) null,
     deleted_by varchar(64) null,
     tenant_id  varchar(64) null
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 create table org_use_columns
 (
@@ -24,7 +24,7 @@ create table org_use_columns
     column_id     varchar(64) null,
     viewer_status int(4) null,
     tenant_id     varchar(64) null
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 create table org_user
 (
@@ -50,7 +50,11 @@ create table org_user
     created_by      varchar(64) null,
     updated_by      varchar(64) null,
     deleted_by       varchar(64) null
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+create unique index org_user_email_uindex
+    on org_user (email);
+
 
 create table org_user_account
 (
@@ -66,9 +70,9 @@ create table org_user_account
     updated_by varchar(64) null,
     deleted_by varchar(64) null,
     tenant_id  varchar(64) null
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-create index account
+create unique index org_user_account_account_uindex
     on org_user_account (account);
 
 create table org_user_department_relation
@@ -78,7 +82,7 @@ create table org_user_department_relation
     user_id varchar(64) null,
     dep_id  varchar(64) null,
     attr    varchar(64) null
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 create table org_user_table_columns
 (
@@ -99,7 +103,7 @@ create table org_user_table_columns
     created_by   varchar(64) null,
     updated_by   varchar(64) null,
     deleted_by   varchar(64) null
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 create index columns_name
     on org_user_table_columns (columns_name);
@@ -111,7 +115,7 @@ create table org_user_tenant_relation
     user_id   varchar(64) null,
     tenant_id varchar(64) null,
     status    bigint      null
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 create table org_oct_use_columns
 (
@@ -124,7 +128,7 @@ create table org_oct_use_columns
     created_by    varchar(64) null,
     updated_bt    varchar(64) null,
     tenant_id     varchar(64) null
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 create table org_oct_user_table_columns
 (
@@ -145,7 +149,7 @@ create table org_oct_user_table_columns
     deleted_by   varchar(64) null,
     tenant_id    varchar(64) null,
     format       varchar(64) null
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 create index columns_name
     on org_oct_user_table_columns (columns_name);
@@ -157,26 +161,5 @@ create table org_user_leader_relation
     user_id   varchar(64)  null,
     leader_id varchar(64)  null,
     attr      varchar(256) null
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---  超管数据
-INSERT INTO org_user (id, name, phone, email, self_email, id_card, address,
-                      use_status, position, avatar, password_status, created_at,
-                      updated_at, created_by, updated_by, tenant_id)
-VALUES ('1', 'SuperAdmin', '13888886666', 'admin@yunify.com', 'admin@yunify.com', null, null, 1, null,
-        null, 1, null, null, null, null, '1000');
-
-INSERT INTO org_department (id, name, use_status, attr, pid, super_pid, grade, created_at, updated_at, deleted_at,
-                            created_by, updated_by, deleted_by, tenant_id)
-VALUES ('1', 'QCC', 1, 1, null, '1', 1, null, null, null, null, null, null, '1');
-
--- 密码 654321a..
-INSERT INTO org_user_account (id, account, password, created_at, updated_at, deleted_at, created_by, updated_by,
-                              deleted_by,
-                              tenant_id)
-VALUES ('1', 'admin@yunify.com', '24d04ec3c9f0e285791035a47ba3e61a', null, null, null, null, null, null, '1000');
-
-
-
-INSERT INTO org_user_department_relation (id, user_id, dep_id, attr)
-VALUES ('1', '1', '1', '直属领导');

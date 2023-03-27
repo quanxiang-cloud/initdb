@@ -1,5 +1,7 @@
--- flow.dispatcher_callback definition
-
+-- ----------------------------
+-- Table structure for dispatcher_callback
+-- ----------------------------
+DROP TABLE IF EXISTS `dispatcher_callback`;
 CREATE TABLE `dispatcher_callback` (
   `id` varchar(40) NOT NULL,
   `type` varchar(10) NOT NULL COMMENT '回调类型',
@@ -13,9 +15,10 @@ CREATE TABLE `dispatcher_callback` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
--- flow.flow definition
-
+-- ----------------------------
+-- Table structure for flow
+-- ----------------------------
+DROP TABLE IF EXISTS `flow`;
 CREATE TABLE `flow` (
   `id` varchar(40) NOT NULL DEFAULT '' COMMENT '流程id',
   `app_id` varchar(100) NOT NULL DEFAULT '' COMMENT '应用id',
@@ -42,9 +45,10 @@ CREATE TABLE `flow` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='流程表';
 
-
--- flow.flow_abnormal_task definition
-
+-- ----------------------------
+-- Table structure for flow_abnormal_task
+-- ----------------------------
+DROP TABLE IF EXISTS `flow_abnormal_task`;
 CREATE TABLE `flow_abnormal_task` (
   `id` varchar(40) NOT NULL DEFAULT '',
   `flow_instance_id` varchar(100) NOT NULL DEFAULT '' COMMENT '流程实例id',
@@ -61,9 +65,10 @@ CREATE TABLE `flow_abnormal_task` (
   `modify_time` varchar(40) DEFAULT NULL COMMENT '更新时间'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='异常任务';
 
-
--- flow.flow_comment definition
-
+-- ----------------------------
+-- Table structure for flow_comment
+-- ----------------------------
+DROP TABLE IF EXISTS `flow_comment`;
 CREATE TABLE `flow_comment` (
   `id` varchar(40) NOT NULL COMMENT '主键',
   `flow_instance_id` varchar(40) NOT NULL DEFAULT '' COMMENT '流程实例id',
@@ -77,9 +82,10 @@ CREATE TABLE `flow_comment` (
   KEY `flow_comment_flow_instance_id_index` (`flow_instance_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
--- flow.flow_comment_attachment definition
-
+-- ----------------------------
+-- Table structure for flow_comment_attachment
+-- ----------------------------
+DROP TABLE IF EXISTS `flow_comment_attachment`;
 CREATE TABLE `flow_comment_attachment` (
   `id` varchar(40) NOT NULL COMMENT '主键',
   `flow_comment_id` varchar(40) NOT NULL COMMENT '流程讨论表id',
@@ -93,9 +99,28 @@ CREATE TABLE `flow_comment_attachment` (
   KEY `flow_comment_attachment_flow_comment_id_index` (`flow_comment_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- ----------------------------
+-- Table structure for flow_form_field
+-- ----------------------------
+DROP TABLE IF EXISTS `flow_form_field`;
+CREATE TABLE `flow_form_field` (
+  `id` varchar(40) NOT NULL DEFAULT '' COMMENT '主键',
+  `flow_id` varchar(40) NOT NULL DEFAULT '' COMMENT '流程id',
+  `form_id` varchar(50) NOT NULL DEFAULT '' COMMENT '表单id',
+  `field_name` varchar(50) NOT NULL DEFAULT '' COMMENT '字段名',
+  `field_value_path` varchar(100) NOT NULL DEFAULT '' COMMENT '字段值path',
+  `creator_id` varchar(40) NOT NULL DEFAULT '',
+  `create_time` varchar(40) DEFAULT NULL,
+  `modifier_id` varchar(40) NOT NULL DEFAULT '',
+  `modify_time` varchar(40) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `flow_id` (`flow_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='工作流表单字段';
 
--- flow.flow_instance definition
-
+-- ----------------------------
+-- Table structure for flow_instance
+-- ----------------------------
+DROP TABLE IF EXISTS `flow_instance`;
 CREATE TABLE `flow_instance` (
   `id` varchar(40) NOT NULL DEFAULT '' COMMENT '流程实例id',
   `app_id` varchar(100) NOT NULL DEFAULT '' COMMENT '应用id',
@@ -116,9 +141,10 @@ CREATE TABLE `flow_instance` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='流程实例';
 
-
--- flow.flow_instance_step definition
-
+-- ----------------------------
+-- Table structure for flow_instance_step
+-- ----------------------------
+DROP TABLE IF EXISTS `flow_instance_step`;
 CREATE TABLE `flow_instance_step` (
   `id` varchar(64) NOT NULL COMMENT '主键',
   `process_instance_id` varchar(64) NOT NULL DEFAULT '' COMMENT '流程实例id',
@@ -136,9 +162,10 @@ CREATE TABLE `flow_instance_step` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='流程实例步骤表';
 
-
--- flow.flow_instance_variables definition
-
+-- ----------------------------
+-- Table structure for flow_instance_variables
+-- ----------------------------
+DROP TABLE IF EXISTS `flow_instance_variables`;
 CREATE TABLE `flow_instance_variables` (
   `id` varchar(40) NOT NULL DEFAULT '' COMMENT '主键',
   `process_instance_id` varchar(40) NOT NULL DEFAULT '' COMMENT '流程实例id',
@@ -157,9 +184,10 @@ CREATE TABLE `flow_instance_variables` (
   KEY `flow_id` (`process_instance_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='流程实例变量表';
 
-
--- flow.flow_operation_record definition
-
+-- ----------------------------
+-- Table structure for flow_operation_record
+-- ----------------------------
+DROP TABLE IF EXISTS `flow_operation_record`;
 CREATE TABLE `flow_operation_record` (
   `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `process_instance_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
@@ -176,12 +204,14 @@ CREATE TABLE `flow_operation_record` (
   `creator_id` varchar(40) NOT NULL DEFAULT '' COMMENT '创建人',
   `create_time` varchar(40) DEFAULT NULL COMMENT '创建时间',
   `modifier_id` varchar(40) NOT NULL DEFAULT '' COMMENT '更新人',
-  `modify_time` varchar(40) DEFAULT NULL COMMENT '更新时间'
+  `modify_time` varchar(40) DEFAULT NULL COMMENT '更新时间',
+  `rel_node_def_key` varchar(255) NOT NULL DEFAULT '' COMMENT '关联的node节点'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='流程操作记录';
 
-
--- flow.flow_trigger_rule definition
-
+-- ----------------------------
+-- Table structure for flow_trigger_rule
+-- ----------------------------
+DROP TABLE IF EXISTS `flow_trigger_rule`;
 CREATE TABLE `flow_trigger_rule` (
   `id` varchar(40) NOT NULL DEFAULT '' COMMENT 'id',
   `flow_id` varchar(100) NOT NULL DEFAULT '' COMMENT '流程id',
@@ -194,9 +224,10 @@ CREATE TABLE `flow_trigger_rule` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='流程触发规则';
 
-
--- flow.flow_urge definition
-
+-- ----------------------------
+-- Table structure for flow_urge
+-- ----------------------------
+DROP TABLE IF EXISTS `flow_urge`;
 CREATE TABLE `flow_urge` (
   `id` varchar(40) NOT NULL,
   `task_id` varchar(64) DEFAULT NULL COMMENT '任务id',
@@ -208,9 +239,10 @@ CREATE TABLE `flow_urge` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
--- flow.flow_variables definition
-
+-- ----------------------------
+-- Table structure for flow_variables
+-- ----------------------------
+DROP TABLE IF EXISTS `flow_variables`;
 CREATE TABLE `flow_variables` (
   `id` varchar(40) NOT NULL DEFAULT '' COMMENT '主键',
   `flow_id` varchar(40) NOT NULL DEFAULT '' COMMENT '流程id',
@@ -229,9 +261,10 @@ CREATE TABLE `flow_variables` (
   KEY `flow_id` (`flow_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='工作流变量表';
 
-
--- flow.instance_execution definition
-
+-- ----------------------------
+-- Table structure for instance_execution
+-- ----------------------------
+DROP TABLE IF EXISTS `instance_execution`;
 CREATE TABLE `instance_execution` (
   `id` varchar(40) NOT NULL DEFAULT '' COMMENT '主键',
   `process_instance_id` varchar(40) NOT NULL DEFAULT '' COMMENT '流程实例id',
@@ -243,8 +276,25 @@ CREATE TABLE `instance_execution` (
   `modify_time` varchar(40) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+SET FOREIGN_KEY_CHECKS = 1;
+
+
+DROP TABLE IF EXISTS `flow_process_relation`;
+CREATE TABLE `flow_process_relation`
+(
+    `id`          varchar(40) NOT NULL DEFAULT '' COMMENT '流程id',
+    `bpmn_text`   text        NOT NULL COMMENT '流程xml文件内容',
+    `flow_id`     varchar(40) NOT NULL DEFAULT '' COMMENT 'flowID',
+    `process_id`  varchar(40) NOT NULL DEFAULT '' COMMENT 'process中流程的id',
+    `creator_id`  varchar(40) NOT NULL DEFAULT '' COMMENT '创建人',
+    `create_time` varchar(40)          DEFAULT NULL COMMENT '创建时间',
+    `modifier_id` varchar(40) NOT NULL DEFAULT '' COMMENT '更新人',
+    `modify_time` varchar(40)          DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='流程实例关系表';
 
 INSERT INTO flow_variables (id,flow_id,name,`type`,code,field_type,format,default_value,`desc`,creator_id,create_time,modifier_id,modify_time) VALUES
 	 ('1','0','流程发起人','SYSTEM','flowVar_instanceCreatorName','string','','','','0','2021-09-14T14:30:18+0000','0','2021-09-14T14:30:18+0000'),
 	 ('2','0','流程发起时间','SYSTEM','flowVar_instanceCreateTime','datetime','','','','0','2021-09-14T14:30:18+0000','0','2021-09-14T14:30:18+0000'),
 	 ('3','0','流程状态','SYSTEM','flowVar_instanceStatus','string','','','','0','2021-09-14T14:30:18+0000','0','2021-09-14T14:30:18+0000');
+

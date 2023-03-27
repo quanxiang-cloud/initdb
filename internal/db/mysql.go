@@ -26,7 +26,7 @@ import (
 )
 
 type DBConfig struct {
-	Type     string `envconfig:"default=myql,DBTYPE"`
+	Type     string `envconfig:"default=mysql,DBTYPE"`
 	Host     string `envconfig:"default=localhost,DBHOST"`
 	UserName string `envconfig:"default=root,DBUSER"`
 	Password string `envconfig:"DBPASSWORD"`
@@ -66,7 +66,7 @@ func (d *DBConfig) CreateDB(dbNames []string) error {
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelfunc()
 	for _, v := range dbNames {
-		res, err := conn.ExecContext(ctx, "CREATE DATABASE IF NOT EXISTS "+v)
+		res, err := conn.ExecContext(ctx, fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s default character set utf8mb4 collate utf8mb4_unicode_ci;", v))
 		if err != nil {
 			return err
 		}
@@ -77,6 +77,27 @@ func (d *DBConfig) CreateDB(dbNames []string) error {
 		}
 		fmt.Printf("rows affected %d\n", no)
 	}
+	return err
+}
+
+func (d *DBConfig) ExecSql(dbName, sqlStr string) error {
+	conn, err := sql.Open("mysql", d.dsn(dbName))
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelfunc()
+	res, err := conn.ExecContext(ctx, sqlStr)
+	if err != nil {
+		fmt.Println("Failed to exec sql:  ", sqlStr)
+		return err
+	}
+	no, err := res.RowsAffected()
+	if err != nil {
+		fmt.Printf("Error %s when fetching rows", err)
+	}
+	fmt.Printf("rows affected %d", no)
 	return err
 }
 
