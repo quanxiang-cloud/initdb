@@ -30,7 +30,7 @@ create table t_app_user_relation
 
 create table t_app_scope(
     app_id varchar(64) null ,
-    scope_id varchar(64) null
+    scope_id varchar(64) null,
     type varchar(64) null
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

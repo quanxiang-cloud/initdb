@@ -1,5 +1,3 @@
-package main
-
 /*
 Copyright 2022 QuanxiangCloud Authors
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +10,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+package main
 
 import (
 	"fmt"
@@ -28,6 +27,7 @@ import (
 )
 
 func main() {
+
 	var db db.DBConfig
 	var git faas.GitConf
 	var docker faas.DockerConf
@@ -35,12 +35,7 @@ func main() {
 	if err := envconfig.Init(&db); err != nil {
 		panic(err)
 	}
-	/*
-		dbPath, err := filepath.Abs("./migrations")
-		if err != nil {
-			fmt.Println(err)
-		}
-	*/
+
 	if err := envconfig.Init(&git); err != nil {
 		log.Panicln(err)
 	}
@@ -99,9 +94,10 @@ func main() {
 		}
 		break
 	}
+
 	// init nav
+	i := 0
 	for {
-		var i int
 		if err := web.InitNav(); err != nil {
 			toolkits.Error(fmt.Sprintf("retry init nav %d times", i), err)
 			time.Sleep(5 * time.Second)
@@ -112,8 +108,8 @@ func main() {
 	}
 
 	// init artery
+	i = 0
 	for {
-		var i int
 		if err := web.InitArtery(); err != nil {
 			time.Sleep(5 * time.Second)
 			toolkits.Error(fmt.Sprintf("retry init artery %d times", i), err)
@@ -132,4 +128,5 @@ func main() {
 		}
 		break
 	}
+
 }
